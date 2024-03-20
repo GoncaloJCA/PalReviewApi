@@ -74,6 +74,9 @@ namespace PalReviewApi.Controller
         {
             if (countryCreate == null) { return BadRequest(ModelState); }
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (_countryRepository.CountryExists(countryCreate.Id))
             {
                 ModelState.AddModelError("", "There is already a Country with that Id");

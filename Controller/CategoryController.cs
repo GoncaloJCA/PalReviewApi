@@ -79,7 +79,10 @@ namespace PalReviewApi.Controller
         {
             if(categoryCreate == null){ return BadRequest(ModelState); }
 
-            if(_categoryRepository.CategoryExists(categoryCreate.Id)) { return BadRequest(ModelState); }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (_categoryRepository.CategoryExists(categoryCreate.Id)) { return BadRequest(ModelState); }
 
             var category = _categoryRepository.GetCategories()
                 .Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper())
