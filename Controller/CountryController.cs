@@ -66,5 +66,39 @@ namespace PalReviewApi.Controller
             }
             return Ok(country);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public ActionResult CreateCountry([FromBody] CountryDto countryCreate)
+        {
+            if (countryCreate == null) { return BadRequest(ModelState); }
+
+            if (_countryRepository.CountryExists(countryCreate.Id))
+            {
+                ModelState.AddModelError("", "There is already a Country with that Id");
+                return StatusCode(400, ModelState);
+            }
+
+            var country = _countryRepository.GetCountries()
+                .Where(c => c.Name.Trim().ToUpper() == countryCreate.Name.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if (country != null)
+            {
+                ModelState.AddModelError("", "Country already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            var countryMap = _mapper.Map<Country>(countryCreate);
+
+            if (!_countryRepository.CreateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
+        }
     }
 }
