@@ -10,6 +10,7 @@ namespace PalReviewApi.Helper
         {
             CreateMap<Pal, PalDto>();
             CreateMap<Category, CategoryDto>();
+            CreateMap<CategoryDto, Category>();
             CreateMap<Country, CountryDto>();
             CreateMap<Owner, OwnerDto>();
         }

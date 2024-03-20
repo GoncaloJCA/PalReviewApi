@@ -8,5 +8,7 @@ namespace PalReviewApi.Interfaces
         Category GetCategory(int id);
         ICollection<Pal> GetPalByCategory(int categoryId);
         bool CategoryExists(int id);
+        bool CreateCategory(Category category);
+        bool Save();
     }
 }
