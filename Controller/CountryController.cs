@@ -53,7 +53,7 @@ namespace PalReviewApi.Controller
             return Ok(country);
         }
 
-        [HttpGet("owners/{ownerId}")]
+        [HttpGet("owner/{ownerId}")]
         [ProducesResponseType(200, Type = typeof(Country))]
         [ProducesResponseType(400)]
         public IActionResult GetCountryByOwner(int ownerId)
