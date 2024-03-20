@@ -1,0 +1,6 @@
+@PalReviewApi_HostAddress = http://localhost:5252
+
+GET {{PalReviewApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
