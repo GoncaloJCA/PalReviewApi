@@ -37,7 +37,7 @@ namespace PalReviewApi.Controller
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
-        public IActionResult GetPal(int categoryId)
+        public IActionResult GetCategory(int categoryId)
         {
             if (!_categoryRepository.CategoryExists(categoryId))
             {
