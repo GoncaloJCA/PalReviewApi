@@ -9,5 +9,7 @@ namespace PalReviewApi.Interfaces
         Pal GetPal(string name);
         decimal GetPalRating(int palId);
         bool PalExists(int palId);
+        bool CreatePal(int ownerId, int categoryId, Pal pal);
+        bool Save();
     }
 }

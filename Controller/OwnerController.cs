@@ -78,6 +78,7 @@ namespace PalReviewApi.Controller
             }
             return Ok(pals);
         }
+
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]

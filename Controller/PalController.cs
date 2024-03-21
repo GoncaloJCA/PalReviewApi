@@ -27,7 +27,7 @@ namespace PalReviewApi.Controller
         {
             var pals = _mapper.Map<List<PalDto>>(_palRepository.GetPals());
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -70,6 +70,37 @@ namespace PalReviewApi.Controller
                 return BadRequest(ModelState);
             }
             return Ok(rating);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public ActionResult CreateOwner([FromBody] PalDto palCreate, [FromQuery] int ownerId, [FromQuery] int catId)
+        {
+            if (palCreate == null) { return BadRequest(ModelState); }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var pals = _palRepository.GetPals()
+                .Where(p => p.Name.Trim().ToUpper() == palCreate.Name.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if (pals != null)
+            {
+                ModelState.AddModelError("", "Owner already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            var palMap = _mapper.Map<Pal>(palCreate);
+
+            if (!_palRepository.CreatePal(ownerId, catId, palMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
     }
 }
