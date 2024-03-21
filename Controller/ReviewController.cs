@@ -13,11 +13,15 @@ namespace PalReviewApi.Controller
     public class ReviewController : ControllerBase
     {
         private readonly IReviewRepository _reviewRepository;
+        private readonly IReviewerRepository _reviewerRepository;
+        private readonly IPalRepository _palRepository;
         private readonly IMapper _mapper;
 
-        public ReviewController(IReviewRepository reviewRepository, IMapper mapper)
+        public ReviewController(IReviewRepository reviewRepository, IReviewerRepository reviewerRepository, IPalRepository palRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
+            _reviewerRepository = reviewerRepository;
+            _palRepository = palRepository;
             _mapper = mapper;
         }
 
@@ -66,6 +70,40 @@ namespace PalReviewApi.Controller
                 return BadRequest(ModelState);
             }
             return Ok(reviews);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public ActionResult CreateReview([FromBody] ReviewDto reviewCreate, [FromQuery] int reviewerID, [FromQuery] int palId)
+        {
+            if (reviewCreate == null) { return BadRequest(ModelState); }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviews = _reviewRepository.GetReviews()
+                .Where(p => p.Title.Trim().ToUpper() == reviewCreate.Title.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if (reviews != null)
+            {
+                ModelState.AddModelError("", "Owner already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            var reviewMap = _mapper.Map<Review>(reviewCreate);
+
+            reviewMap.Pal = _palRepository.GetPal(palId);  
+            reviewMap.Reviewer = _reviewerRepository.GetReviewer(reviewerID);
+
+            if (!_reviewRepository.CreateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
     }
 }

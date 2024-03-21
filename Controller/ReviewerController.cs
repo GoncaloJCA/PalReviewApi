@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PalReviewApi.Dto;
 using PalReviewApi.Interfaces;
 using PalReviewApi.Models;
+using PalReviewApi.Repository;
 
 namespace PalReviewApi.Controller
 {
@@ -61,6 +62,37 @@ namespace PalReviewApi.Controller
                 return BadRequest(ModelState);
 
             return Ok(reviews);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public ActionResult CreateReviewer([FromBody] ReviewerDto reviewerCreate)
+        {
+            if (reviewerCreate == null) { return BadRequest(ModelState); }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewers = _reviewerRepository.GetReviewers()
+                .Where(p => p.LastName.Trim().ToUpper() == reviewerCreate.LastName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if (reviewers != null)
+            {
+                ModelState.AddModelError("", "Owner already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            var reviewerMap = _mapper.Map<Reviewer>(reviewerCreate);
+
+            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
     }
 }

@@ -12,6 +12,13 @@ namespace PalReviewApi.Repository
         {
             _context = context;
         }
+
+        public bool CreateReviewer(Reviewer reviewer)
+        {
+            _context.Reviewers.Add(reviewer);
+            return Save();
+        }
+
         public Reviewer GetReviewer(int reviewerId)
         {
             return _context.Reviewers.Where(r => r.Id == reviewerId).FirstOrDefault();
@@ -30,6 +37,11 @@ namespace PalReviewApi.Repository
         public bool ReviewerExists(int reviewerId)
         {
             return _context.Reviewers.Any(r => r.Id == reviewerId);
+        }
+
+        public bool Save()
+        {
+            return _context.SaveChanges() > 0;
         }
     }
 }

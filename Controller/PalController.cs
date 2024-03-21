@@ -75,7 +75,7 @@ namespace PalReviewApi.Controller
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public ActionResult CreateOwner([FromBody] PalDto palCreate, [FromQuery] int ownerId, [FromQuery] int catId)
+        public ActionResult CreatePal([FromBody] PalDto palCreate, [FromQuery] int ownerId, [FromQuery] int catId)
         {
             if (palCreate == null) { return BadRequest(ModelState); }
 

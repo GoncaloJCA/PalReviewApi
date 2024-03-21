@@ -12,6 +12,13 @@ namespace PalReviewApi.Repository
         {
             _context = context;
         }
+
+        public bool CreateReview(Review review)
+        {
+            _context.Reviews.Add(review);
+            return Save();
+        }
+
         public Review GetReview(int reviewId)
         {
             return _context.Reviews.Where(r => r.Id == reviewId).FirstOrDefault();
@@ -30,6 +37,11 @@ namespace PalReviewApi.Repository
         public bool ReviewExists(int reviewId)
         {
            return _context.Reviews.Any(r => r.Id == reviewId);
+        }
+
+        public bool Save()
+        {
+            return _context.SaveChanges() > 0;
         }
     }
 }
